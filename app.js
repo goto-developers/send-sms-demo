@@ -2,6 +2,7 @@ require("dotenv").config();
 var { AuthorizationCode } = require("simple-oauth2");
 var crypto = require("crypto");
 var express = require("express");
+var axios = require("axios").default;
 
 var oauthConfig = {
     client: {
@@ -45,6 +46,25 @@ app.get('/login/oauth2/code/goto', async function (req, res) {
         return;
     }
     var accessToken = tokenResponse.token.access_token;
+    var options = {
+        method: 'POST',
+        url: 'https://api.jive.com/messaging/v1/messages',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'content-type': 'application/json'
+        },
+        data: {
+            ownerPhoneNumber: '+15145550100',
+            contactPhoneNumbers: ['+15145550199'],
+            body: 'Congratulations! You have successfully completed the tutorial!'
+        }
+    };
+
+    axios.request(options).then(function (response) {
+        console.log(response.data);
+    }).catch(function (error) {
+        console.error(error);
+    });
 });
 
 app.listen(5000);
