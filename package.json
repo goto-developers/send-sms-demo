@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "simple-oauth2": "^4.3.0"
+  }
+}
