@@ -32,6 +32,19 @@ app.get('/login/oauth2/code/goto', async function (req, res) {
     }
     res.sendStatus(200);
     var authorizationCode = req.query.code;
+    var tokenParams = {
+        code: authorizationCode,
+        redirect_uri: process.env.OAUTH_REDIRECT_URI,
+        scope: 'messaging.v1.send'
+    };
+    var tokenResponse = null;
+    try {
+        tokenResponse = await oauthClient.getToken(tokenParams);
+    } catch (error) {
+        console.log('Access Token Error', error.message);
+        return;
+    }
+    var accessToken = tokenResponse.token.access_token;
 });
 
 app.listen(5000);
