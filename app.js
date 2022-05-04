@@ -1,5 +1,6 @@
 require("dotenv").config();
 var { AuthorizationCode } = require("simple-oauth2");
+var crypto = require("crypto");
 
 var oauthConfig = {
     client: {
@@ -11,3 +12,11 @@ var oauthConfig = {
     }
 };
 var oauthClient = new AuthorizationCode(oauthConfig);
+
+var expectedStateForAuthorizationCode = crypto.randomBytes(15).toString('hex');
+var authorizationUrl = oauthClient.authorizeURL({
+    redirect_uri: process.env.OAUTH_REDIRECT_URI,
+    scope: 'messaging.v1.send',
+    state: expectedStateForAuthorizationCode
+});
+console.log('Open in browser to send a SMS: ', authorizationUrl);
