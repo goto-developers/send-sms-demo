@@ -1,6 +1,7 @@
 require("dotenv").config();
 var { AuthorizationCode } = require("simple-oauth2");
 var crypto = require("crypto");
+var express = require("express");
 
 var oauthConfig = {
     client: {
@@ -20,3 +21,17 @@ var authorizationUrl = oauthClient.authorizeURL({
     state: expectedStateForAuthorizationCode
 });
 console.log('Open in browser to send a SMS: ', authorizationUrl);
+
+var app = express();
+
+app.get('/login/oauth2/code/goto', async function (req, res) {
+    if (req.query.state != expectedStateForAuthorizationCode) {
+        console.log('Ignoring authorization code with unexpected state');
+        res.sendStatus(403);
+        return;
+    }
+    res.sendStatus(200);
+    var authorizationCode = req.query.code;
+});
+
+app.listen(5000);
